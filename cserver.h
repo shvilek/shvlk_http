@@ -34,7 +34,7 @@ public:
   CServer(int aHandlerCount);
   int run(const std::string& aHost, const std::string& aDir, int port);
   bool running() const { return running_; }
-  void stop() { running_ = false; }
+  void stop() { running_ = false; condition_.notify_all(); }
   bool tasks_empty() const { return tasks_.empty(); }
 
   tasks_t& tasks() { return tasks_; }

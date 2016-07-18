@@ -45,9 +45,9 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
                 push_request(client_);
            }
        }
-
-           clear_all();
-           return 0;
+       while(tasks_.size());
+       //clear_all();
+       return 0;
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
@@ -69,9 +69,12 @@ void CServer::add_handler() {
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
 
 void CServer::remove_handler(int aId) {
-    handlers_[aId].join();
+    std::cout << "join " << aId;
+    //handlers_[aId].join();
+    std::cout << " erase  " << aId;
     handlers_.erase(aId);
     workers_.erase(aId);
+flush(std::cout);
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
