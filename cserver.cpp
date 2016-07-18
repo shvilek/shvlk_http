@@ -32,7 +32,8 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
     sockaddr_in sa;
     sa.sin_family = AF_INET;
     sa.sin_port = htons(aPort);
-    sa.sin_addr.s_addr = htonl(INADDR_ANY);
+    inet_pton(AF_INET, aHost.c_str(), &sa.sin_addr);
+    //sa.sin_addr.s_addr = htonl(INADDR_ANY);
     bind(master_, (const sockaddr*)&sa, sizeof(sa));
     listen(master_, SOMAXCONN);
     setnonblocking(master_);
