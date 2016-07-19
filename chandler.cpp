@@ -73,11 +73,11 @@ void CHandler::process_request(int aConnection) {
     char read_data[2048];
     std::stringstream ss;
     std::stringstream ss1;
-    ss1 << "/home/asuhov/Homework/shvlk_http/logfile_req" << aConnection <<  ".txt";
+    ss1 << "/home/box/logfile_req" << aConnection <<  ".txt";
     std::string req_path_ = ss1.str();
     ss1.str("");
 
-    ss1 << "/home/asuhov/Homework/shvlk_http/logfile_res" << aConnection <<  ".txt";
+    ss1 << "/home/box/logfile_res" << aConnection <<  ".txt";
     std::string res_path_ = ss1.str();
     ss1.str("");
 
