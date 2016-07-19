@@ -84,7 +84,11 @@ void CHandler::process_request(int aConnection) {
     std::string head_line_;
     int count = 0;
     while (state_ != rs_body && (count = recv(aConnection, &data, 1, MSG_NOSIGNAL)) > 0) {
-        ////std::cout << data;
+
+        std::ofstream log("/home/box/logfile_req.txt", std::ios_base::app | std::ios_base::out);
+        log << data;
+        log.close();
+
         if (state_ == rs_body || data == '\r') continue;
         switch(state_) {
         case rs_initial_line_method:
@@ -133,6 +137,9 @@ void CHandler::process_request(int aConnection) {
         }
     }
 
+    std::ofstream log("/home/box/logfile.txt", std::ios_base::app | std::ios_base::out);
+    log << path_ << std::endl;
+    log.close();
                 path_ = owner_.root_path() + path_;
                 std::ifstream file_(path_, std::ios::binary);
                 //file_.open(path_, std::ios::binary);
