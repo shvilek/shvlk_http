@@ -82,6 +82,7 @@ void CHandler::process_request(int aConnection) {
     std::string version_;
     std::vector<std::string> headers_;
     std::string head_line_;
+    bool params_ = false;
     int count = 0;
     while (state_ != rs_body && (count = recv(aConnection, &data, 1, MSG_NOSIGNAL)) > 0) {
 
@@ -100,9 +101,12 @@ void CHandler::process_request(int aConnection) {
             }
             break;
         case rs_initial_line_path:
-            if (data != ' ')
+            if (!params_ && data == '?') {
+                params_ = true;
+            }
+            if (data != ' ' && !params_)
                 path_ += data;
-            else {
+            else if (data == ' '){
                 //std::cout << "PATH: " << path_ << std::endl;
                 state_ = rs_initial_line_version;
             }
