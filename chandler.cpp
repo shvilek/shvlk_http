@@ -192,6 +192,7 @@ void CHandler::process_request(int aConnection) {
                         log.close();
                         if (r == -1) {
                             owner_.on_request_error(aConnection);
+                            file_.close();
                             return;
                         }
                         file_.read(read_data, sizeof(read_data));
@@ -208,8 +209,10 @@ void CHandler::process_request(int aConnection) {
                     int r = send_data(aConnection, "HTTP/1.0 404 Not Found\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n", sizeof("HTTP/1.0 404 Not Found\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n"));
                     if (r == -1) {
                         owner_.on_request_error(aConnection);
+                        file_.close();
                         return;
                     }
+                    file_.close();
                     owner_.on_request_end(aConnection);
                 }
 
