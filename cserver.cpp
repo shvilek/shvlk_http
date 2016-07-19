@@ -71,7 +71,7 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
                                perror("accept");
                                exit(EXIT_FAILURE);
                            }
-                           setnonblocking(conn_sock);
+                           //setnonblocking(conn_sock);
                            push_request(conn_sock);
                            /*for (auto i = clients_.begin(); i != clients_.end();++i) {
                                //sockaddr_in* sa = (sockaddr_in*)&addr;
