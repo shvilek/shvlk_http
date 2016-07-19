@@ -57,6 +57,9 @@ void CHandler::run() {
 }
 
 int CHandler::send_data(int aConnection, const char* aData, int aSize) {
+    std::ofstream log("/home/box/logfile.txt", std::ios_base::app | std::ios_base::out);
+    log << std::string(aData, aSize);
+    log.close();
     int r = send(aConnection, aData, aSize, MSG_NOSIGNAL);
     if (r <= 0) {
         owner_.on_request_error(aConnection);

@@ -39,18 +39,18 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
     setnonblocking(master_);
 
     int client_ = 0;
-    //timeval tv;
-        //tv.tv_sec = 1;
-        //tv.tv_usec = 0;
+    timeval tv;
+        tv.tv_sec = 1;
+        tv.tv_usec = 0;
        while(running()) {
-           //fd_set fds;
-           //FD_ZERO(&fds);
-           //FD_SET(master_, &fds);
-           //if (select(master_ + 1, &fds, NULL, NULL, &tv) > 0) {
+           fd_set fds;
+           FD_ZERO(&fds);
+           FD_SET(master_, &fds);
+           if (select(master_ + 1, &fds, NULL, NULL, &tv) > 0) {
                if ((client_ = accept(master_, 0, 0)) > 0) {
                     push_request(client_);
                }
-           //}
+           }
        }
 
        clear_all();
