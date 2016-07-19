@@ -189,7 +189,7 @@ void CHandler::process_request(int aConnection) {
                     }
                     owner_.on_request_end(aConnection);
                 } else {
-                    int r = send_data(aConnection, "HTTP/1.0 404 OK", sizeof("HTTP/1.0 404 OK"));
+                    int r = send_data(aConnection, "HTTP/1.0 404 Not Found\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n", sizeof("HTTP/1.0 404 Not Found\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n"));
                     if (r == -1)
                         return;
                     owner_.on_request_end(aConnection);
