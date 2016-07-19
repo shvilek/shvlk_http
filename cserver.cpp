@@ -48,6 +48,7 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
            FD_SET(master_, &fds);
            if (select(master_ + 1, &fds, NULL, NULL, &tv) > 0) {
                if ((client_ = accept(master_, 0, 0)) > 0) {
+                   setnonblocking(client_);
                     push_request(client_);
                }
            }
