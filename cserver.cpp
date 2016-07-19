@@ -38,45 +38,21 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
     listen(master_, SOMAXCONN);
     setnonblocking(master_);
 
-
-    sockaddr_in addr;
-    socklen_t addrlen = sizeof(addr);
-
-#define MAX_EVENTS 10
-struct epoll_event ev, events[MAX_EVENTS];
-           int epollfd = epoll_create1(0);
-           if (epollfd == -1) {
-               perror("epoll_create1");
-               exit(EXIT_FAILURE);
-           }
-
-           ev.events = EPOLLIN;
-           ev.data.fd = master_;
-           if (epoll_ctl(epollfd, EPOLL_CTL_ADD, master_, &ev) == -1) {
-               perror("epoll_ctl: Master");
-               exit(EXIT_FAILURE);
-           }
-
-           while(running()) {
-               int nfds = epoll_wait(epollfd, events, MAX_EVENTS, 1);
-               if (nfds == -1) {
-                   perror("epoll_wait");
-                   exit(EXIT_FAILURE);
-               }
-
-               for (int n = 0; n < nfds; ++n) {
-                   if (events[n].data.fd == master_) {
-                       int conn_sock = accept(master_, (sockaddr *) &addr, &addrlen);
-                       if (conn_sock == -1) {
-                           perror("accept");
-                           exit(EXIT_FAILURE);
-                       }
-                       setnonblocking(conn_sock);
-                       push_request(conn_sock);
-                   }
+    int client_ = 0;
+    timeval tv;
+        tv.tv_sec = 1;
+        tv.tv_usec = 0;
+       while(running()) {
+           fd_set fds;
+           FD_ZERO(&fds);
+           FD_SET(master_, &fds);
+           if (select(master_ + 1, &fds, NULL, NULL, &tv) > 0) {
+               if ((client_ = accept(master_, 0, 0)) > 0) {
+                    push_request(client_);
                }
            }
-       sleep(1);
+       }
+
        clear_all();
        return 0;
 }
