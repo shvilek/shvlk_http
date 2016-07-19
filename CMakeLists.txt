@@ -9,4 +9,3 @@ set(Shvlk_src
 	utils.h)
 add_executable(final ${Shvlk_src})
 TARGET_LINK_LIBRARIES(final pthread)
-target_compile_features(final PRIVATE cxx_range_for)
