@@ -141,7 +141,7 @@ void CHandler::process_request(int aConnection) {
                     auto now = std::chrono::system_clock::now();
                     auto now_c = std::chrono::system_clock::to_time_t(now);
 
-                    ss << "HTTP/1.0 200 OK\r\n\r\n\r\n";
+                    ss << "HTTP/1.0 200 OK\r\n\r\n";
                     //ss << "Date: " << std::put_time(std::localtime(&now_c), "%c") << "\r\n";
                     //ss << "Content-Type: text/html\r\n";
                     //ss << "Content-Length: " << size_  << "\r\n" << "\r\n";
