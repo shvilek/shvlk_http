@@ -73,11 +73,11 @@ void CHandler::process_request(int aConnection) {
     char read_data[2048];
     std::stringstream ss;
     std::stringstream ss1;
-    ss1 << "/home/box/logfile_req" << aConnection <<  ".txt";
+    ss1 << "/home/asuhov/Homework/shvlk_http/logfile_req" << aConnection <<  ".txt";
     std::string req_path_ = ss1.str();
     ss1.str("");
 
-    ss1 << "/home/box/logfile_res" << aConnection <<  ".txt";
+    ss1 << "/home/asuhov/Homework/shvlk_http/logfile_res" << aConnection <<  ".txt";
     std::string res_path_ = ss1.str();
     ss1.str("");
 
@@ -169,7 +169,7 @@ void CHandler::process_request(int aConnection) {
                     ss << "Connection: close\r\n";
                     ss << "Content-Length: " << size_  << "\r\n" << "\r\n";
                     std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
-                    log << ss.str() << std::endl;
+                    log << ss.str();
                     log.close();
                     r = send_data(aConnection, ss.str().data(), ss.str().size());
                     if (r == -1) {
