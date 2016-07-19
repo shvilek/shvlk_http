@@ -62,6 +62,8 @@ int CHandler::send_data(int aConnection, const char* aData, int aSize) {
         owner_.on_request_error(aConnection);
         return -1;
     } else {
+        std::cout << std::string(aData, aSize);
+        flush(std::cout);
         return r;
     }
 }
@@ -143,8 +145,9 @@ void CHandler::process_request(int aConnection) {
 
                     ss << "HTTP/1.0 200 OK\r\n\r\n";
                     //ss << "Date: " << std::put_time(std::localtime(&now_c), "%c") << "\r\n";
-                    //ss << "Content-Type: text/html\r\n";
-                    //ss << "Content-Length: " << size_  << "\r\n" << "\r\n";
+                    ss << "Content-Type: text/html\r\n";
+                    ss << "Connection: close\r\n";
+                    ss << "Content-Length: " << size_  << "\r\n" << "\r\n";
                     r = send_data(aConnection, ss.str().data(), ss.str().size());
                     if (r == -1) {
                         //std::cout << "ERROR!";
@@ -155,13 +158,19 @@ void CHandler::process_request(int aConnection) {
                     ss.str("");
 
                     file_.read(read_data, sizeof(read_data));
+                    size_t send_size_ = 0;
                     while (file_.gcount() > 0) {
+                        send_size_ += file_.gcount();
                         //std::cout << std::string(&read_data[0], file_.gcount()) << std::endl;
                         flush(std::cout);
                         r = send_data(aConnection, read_data, file_.gcount());
                         if (r == -1)
                             return;
                         file_.read(read_data, sizeof(read_data));
+                    }
+                    if (send_size_ != size_) {
+                        std::cout << "ALARM!!!";
+                        flush(std::cout);
                     }
                     owner_.on_request_end(aConnection);
                 } else {
