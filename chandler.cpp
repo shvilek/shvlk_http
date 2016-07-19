@@ -156,9 +156,9 @@ void CHandler::process_request(int aConnection) {
 
                 if (file_.good()) {
                     int r = 0;
-                    file_.seekg (0, std::ios::end);
-                    size_t size_ = file_.tellg();
-                    file_.seekg (0, std::ios::beg);
+                    //file_.seekg (0, std::ios::end);
+                    //size_t size_ = file_.tellg();
+                    //file_.seekg (0, std::ios::beg);
 
                     auto now = std::chrono::system_clock::now();
                     auto now_c = std::chrono::system_clock::to_time_t(now);
@@ -166,8 +166,8 @@ void CHandler::process_request(int aConnection) {
                     ss << "HTTP/1.0 200 OK\r\n";
                     //ss << "Date: " << std::put_time(std::localtime(&now_c), "%c") << "\r\n";
                     ss << "Content-Type: text/html\r\n";
-                    ss << "Connection: close\r\n";
-                    ss << "Content-Length: " << size_  << "\r\n" << "\r\n";
+                    ss << "Connection: close\r\n\r\n";
+                    //ls ss << "Content-Length: " << size_  << "\r\n" << "\r\n";
 //                    std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
 //                    log << ss.str();
 //                    log.close();
