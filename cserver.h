@@ -67,6 +67,7 @@ private:
   std::set<int> connections_;
   // synchronization
   std::mutex req_mutex_;
+  std::mutex hnd_mutex_;
   std::condition_variable condition_;
 };
 

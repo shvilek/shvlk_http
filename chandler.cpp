@@ -35,7 +35,7 @@ void CHandler::run() {
 
           if (owner_.running() == false) {
               owner_.on_handler_exit(id_);
-              return;
+              break;//return;
           }
 
           // get the task from the queue
@@ -44,7 +44,9 @@ void CHandler::run() {
 
         } // release lock
         process_request(connection_);
-        }catch(...) {
+        }catch(const std::exception &exc) {
+          std::cout <<"EXC " << exc.what() << "\r\n";
+          flush(std::cout);
           owner_.on_handler_exit(id_);
           return;
       }

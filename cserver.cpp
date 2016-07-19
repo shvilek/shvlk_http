@@ -38,24 +38,56 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
     listen(master_, SOMAXCONN);
     setnonblocking(master_);
 
-    int client_ = 0;
 
-       while(running()) {
-           if ((client_ = accept(master_, 0, 0)) > 0) {
-                push_request(client_);
+    sockaddr_in addr;
+    socklen_t addrlen = sizeof(addr);
+
+#define MAX_EVENTS 10
+struct epoll_event ev, events[MAX_EVENTS];
+           int epollfd = epoll_create1(0);
+           if (epollfd == -1) {
+               perror("epoll_create1");
+               exit(EXIT_FAILURE);
            }
-       }
+
+           ev.events = EPOLLIN;
+           ev.data.fd = master_;
+           if (epoll_ctl(epollfd, EPOLL_CTL_ADD, master_, &ev) == -1) {
+               perror("epoll_ctl: Master");
+               exit(EXIT_FAILURE);
+           }
+
+           while(running()) {
+               int nfds = epoll_wait(epollfd, events, MAX_EVENTS, 1);
+               if (nfds == -1) {
+                   perror("epoll_wait");
+                   exit(EXIT_FAILURE);
+               }
+
+               for (int n = 0; n < nfds; ++n) {
+                   if (events[n].data.fd == master_) {
+                       int conn_sock = accept(master_, (sockaddr *) &addr, &addrlen);
+                       if (conn_sock == -1) {
+                           perror("accept");
+                           exit(EXIT_FAILURE);
+                       }
+                       setnonblocking(conn_sock);
+                       push_request(conn_sock);
+                   }
+               }
+           }
        sleep(1);
-      // while(tasks_.size());
-      // clear_all();
+       clear_all();
        return 0;
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
 
 void CServer::clear_all() {
-    while (handlers_.empty() == false);
-        //remove_handler(handlers_.begin()->first);
+    while (handlers_.empty() == false) {
+        handlers_.begin()->second.join();
+        handlers_.erase(handlers_.begin());
+    }
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
@@ -72,12 +104,16 @@ void CServer::add_handler() {
 void CServer::remove_handler(int aId) {
     {
 
-    std::unique_lock<std::mutex> lock(req_mutex());
-    std::cout << "join " << aId;
-    handlers_[aId].join();
-    std::cout << " erase  " << aId;
-    }
+    std::unique_lock<std::mutex> lock(hnd_mutex_);
+    //if (workers_.find(aId) != workers_.end()) {
+    //std::cout << "join " << aId;
+    //handlers_[aId].join();
     //handlers_.erase(aId);
+    workers_.erase(aId);
+    std::cout << " erase  " << aId;
+
+    }
+    //
     //workers_.erase(aId);
 flush(std::cout);
 }
