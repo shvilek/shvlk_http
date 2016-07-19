@@ -91,9 +91,9 @@ void CHandler::process_request(int aConnection) {
     int count = 0;
     while (state_ != rs_body && (count = recv(aConnection, &data, 1, MSG_NOSIGNAL)) > 0) {
 
-//        std::ofstream log(req_path_, std::ios_base::app | std::ios_base::out);
-//        log << data;
-//        log.close();
+        std::ofstream log(req_path_, std::ios_base::app | std::ios_base::out);
+        log << data;
+        log.close();
 
         if (state_ == rs_body || data == '\r') continue;
         switch(state_) {
