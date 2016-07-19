@@ -91,9 +91,9 @@ void CHandler::process_request(int aConnection) {
     int count = 0;
     while (state_ != rs_body && (count = recv(aConnection, &data, 1, MSG_NOSIGNAL)) > 0) {
 
-        std::ofstream log(req_path_, std::ios_base::app | std::ios_base::out);
-        log << data;
-        log.close();
+//        std::ofstream log(req_path_, std::ios_base::app | std::ios_base::out);
+//        log << data;
+//        log.close();
 
         if (state_ == rs_body || data == '\r') continue;
         switch(state_) {
@@ -147,9 +147,9 @@ void CHandler::process_request(int aConnection) {
         }
     }
 
-    std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
-    log << "PATH " << path_ << std::endl;
-    log.close();
+//    std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
+//    log << "PATH " << path_ << std::endl;
+//    log.close();
                 path_ = owner_.root_path() + path_;
                 std::ifstream file_(path_, std::ios::binary);
                 //file_.open(path_, std::ios::binary);
@@ -168,9 +168,9 @@ void CHandler::process_request(int aConnection) {
                     ss << "Content-Type: text/html\r\n";
                     ss << "Connection: close\r\n";
                     ss << "Content-Length: " << size_  << "\r\n" << "\r\n";
-                    std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
-                    log << ss.str();
-                    log.close();
+//                    std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
+//                    log << ss.str();
+//                    log.close();
                     r = send_data(aConnection, ss.str().data(), ss.str().size());
                     if (r == -1) {
                         //std::cout << "ERROR!";
@@ -190,8 +190,10 @@ void CHandler::process_request(int aConnection) {
                         std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
                         log << std::string(read_data, file_.gcount()) << std::endl;
                         log.close();
-                        if (r == -1)
+                        if (r == -1) {
+                            owner_.on_request_error(aConnection);
                             return;
+                        }
                         file_.read(read_data, sizeof(read_data));
                     }
                     if (send_size_ != size_) {
@@ -200,12 +202,14 @@ void CHandler::process_request(int aConnection) {
                     }
                     owner_.on_request_end(aConnection);
                 } else {
-                    std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
-                    log << "HTTP/1.0 404 Not Found\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n" << std::endl;
-                    log.close();
+//                    std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
+//                    log << "HTTP/1.0 404 Not Found\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n" << std::endl;
+//                    log.close();
                     int r = send_data(aConnection, "HTTP/1.0 404 Not Found\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n", sizeof("HTTP/1.0 404 Not Found\r\nContent-Length: 0\r\nContent-Type: text/html\r\n\r\n"));
-                    if (r == -1)
+                    if (r == -1) {
+                        owner_.on_request_error(aConnection);
                         return;
+                    }
                     owner_.on_request_end(aConnection);
                 }
 
