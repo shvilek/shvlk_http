@@ -65,8 +65,8 @@ int CHandler::send_data(int aConnection, const char* aData, int aSize) {
         owner_.on_request_error(aConnection);
         return -1;
     } else {
-        std::cout << std::string(aData, aSize);
-        flush(std::cout);
+        //std::cout << std::string(aData, aSize);
+        //flush(std::cout);
         return r;
     }
 }
@@ -108,6 +108,7 @@ void CHandler::process_request(int aConnection) {
                 path_ += data;
             else if (data == ' '){
                 //std::cout << "PATH: " << path_ << std::endl;
+                //flush(std::cout);
                 state_ = rs_initial_line_version;
             }
             break;
