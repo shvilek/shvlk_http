@@ -45,16 +45,17 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
                 push_request(client_);
            }
        }
-       while(tasks_.size());
-       //clear_all();
+       sleep(1);
+      // while(tasks_.size());
+      // clear_all();
        return 0;
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
 
 void CServer::clear_all() {
-    while (handlers_.empty() == false)
-        remove_handler(handlers_.begin()->first);
+    while (handlers_.empty() == false);
+        //remove_handler(handlers_.begin()->first);
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
@@ -63,17 +64,21 @@ void CServer::add_handler() {
     static int handler_id = 0;
     std::shared_ptr<CHandler> handler_(new CHandler(*this, ++handler_id));
     workers_.insert(std::make_pair(handler_id, handler_));
-    handlers_.insert(std::make_pair(handler_id, std::thread(&CHandler::run, handler_.get())));
+    handlers_.insert(std::make_pair(handler_id, std::thread(&CHandler::run, handler_)));
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
 
 void CServer::remove_handler(int aId) {
+    {
+
+    std::unique_lock<std::mutex> lock(req_mutex());
     std::cout << "join " << aId;
-    //handlers_[aId].join();
+    handlers_[aId].join();
     std::cout << " erase  " << aId;
-    handlers_.erase(aId);
-    workers_.erase(aId);
+    }
+    //handlers_.erase(aId);
+    //workers_.erase(aId);
 flush(std::cout);
 }
 

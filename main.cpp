@@ -47,7 +47,7 @@ int main(int argc, char **argv )
     signal(SIGTERM, handle_exit);
     //daemon(0, 0);
     srv.run(host, dir, port);
-
+    sleep(2);
     return 0;
 }
 

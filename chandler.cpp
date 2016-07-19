@@ -22,7 +22,9 @@ CHandler::CHandler(CServer& aOwner, int aId) : owner_(aOwner), id_(aId) {
 
 }
 void CHandler::run() {
+
   while (true) {
+      try {
         int connection_ = 0;
         {
           std::unique_lock<std::mutex> lock(owner_.req_mutex());
@@ -42,7 +44,12 @@ void CHandler::run() {
 
         } // release lock
         process_request(connection_);
+        }catch(...) {
+          owner_.on_handler_exit(id_);
+          return;
       }
+      }
+
 }
 
 int CHandler::send_data(int aConnection, const char* aData, int aSize) {
