@@ -45,7 +45,7 @@ int main(int argc, char **argv )
         //if (!port_set || !host_set || !dir_set)
         //    return 1;
     signal(SIGTERM, handle_exit);
-    //daemon(0, 0);
+    daemon(0, 0);
     srv.run(host, dir, port);
     return 0;
 }
