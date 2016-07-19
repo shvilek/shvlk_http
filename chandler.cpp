@@ -184,7 +184,7 @@ void CHandler::process_request(int aConnection) {
                     size_t send_size_ = 0;
                     while (file_.gcount() > 0) {
                         send_size_ += file_.gcount();
-                        std::cout << send_size_ << std::endl;
+                        std::cout << send_size_ << " " << size_ << std::endl;
                         flush(std::cout);
                         r = send_data(aConnection, read_data, file_.gcount());
                         std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
