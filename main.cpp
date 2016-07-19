@@ -13,7 +13,7 @@ void handle_exit(int aSig) {
 int main(int argc, char **argv )
 {
     daemon(1, 1);
-    srv = new shvilek::CServer(1);
+    srv = new shvilek::CServer(8);
     std::string host;
     int port = 8080;
     std::string dir;
