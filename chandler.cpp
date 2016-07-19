@@ -72,13 +72,14 @@ void CHandler::process_request(int aConnection) {
     char data;
     char read_data[2048];
     std::stringstream ss;
-    ss << "/home/box/logfile_req" << id_ <<  ".txt";
-    std::string req_path_ = ss.str();
-    ss.str("");
+    std::stringstream ss1;
+    ss1 << "/home/box/logfile_req" << aConnection <<  ".txt";
+    std::string req_path_ = ss1.str();
+    ss1.str("");
 
-    ss << "/home/box/logfile_res" << id_ <<  ".txt";
-    std::string res_path_ = ss.str();
-    ss.str("");
+    ss1 << "/home/box/logfile_res" << aConnection <<  ".txt";
+    std::string res_path_ = ss1.str();
+    ss1.str("");
 
     request_state state_ = rs_initial_line_method;
     std::string method_;
