@@ -184,8 +184,6 @@ void CHandler::process_request(int aConnection) {
                     size_t send_size_ = 0;
                     while (file_.gcount() > 0) {
                         send_size_ += file_.gcount();
-                        std::cout << send_size_ << " " << size_ << std::endl;
-                        flush(std::cout);
                         r = send_data(aConnection, read_data, file_.gcount());
                         std::ofstream log(res_path_, std::ios_base::app | std::ios_base::out);
                         log << std::string(read_data, file_.gcount()) << std::endl;
@@ -196,10 +194,6 @@ void CHandler::process_request(int aConnection) {
                             return;
                         }
                         file_.read(read_data, sizeof(read_data));
-                    }
-                    if (send_size_ != size_) {
-                        std::cout << "ALARM!!!";
-                        flush(std::cout);
                     }
                     owner_.on_request_end(aConnection);
                 } else {
