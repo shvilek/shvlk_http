@@ -59,17 +59,15 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
 
                while  (running()) {
                    int nfds = epoll_wait(epollfd, events, MAX_EVENTS, -1);
-                   if (nfds == -1) {
-                       perror("epoll_wait");
-                       exit(EXIT_FAILURE);
+                   if (nfds < 0 && errno == EINTR) {
+                       continue;
                    }
 
                    for (int n = 0; n < nfds; ++n) {
                        if (events[n].data.fd == master_) {
                            int conn_sock = accept(master_, (sockaddr *) &addr, &addrlen);
                            if (conn_sock == -1) {
-                               perror("accept");
-                               exit(EXIT_FAILURE);
+                               continue;
                            }
                            //setnonblocking(conn_sock);
                            push_request(conn_sock);
@@ -179,15 +177,15 @@ void CServer::on_handler_exit(int aId) {
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
 
 void CServer::on_request_error(int aConnection) {
-    connections_.erase(aConnection);
+    //connections_.erase(aConnection);
     close(aConnection);
-    shutdown(aConnection, SHUT_RDWR);
+    //shutdown(aConnection, SHUT_RDWR);
 }
 
 void CServer::on_request_end(int aConnection) {
-    connections_.erase(aConnection);
+    //connections_.erase(aConnection);
     close(aConnection);
-    shutdown(aConnection, SHUT_RDWR);
+    //shutdown(aConnection, SHUT_RDWR);
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
