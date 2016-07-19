@@ -119,11 +119,13 @@ void CServer::on_handler_exit(int aId) {
 
 void CServer::on_request_error(int aConnection) {
     connections_.erase(aConnection);
+    close(aConnection);
     shutdown(aConnection, SHUT_RDWR);
 }
 
 void CServer::on_request_end(int aConnection) {
     connections_.erase(aConnection);
+    close(aConnection);
     shutdown(aConnection, SHUT_RDWR);
 }
 
