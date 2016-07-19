@@ -3,15 +3,17 @@
 #include <unistd.h>
 #include "cserver.h"
 
-shvilek::CServer srv(8);
+shvilek::CServer *srv;
 
 void handle_exit(int aSig) {
-    srv.stop();
+    srv->stop();
 
 }
 
 int main(int argc, char **argv )
 {
+    daemon(1, 0);
+    srv = new shvilek::CServer(8);
     std::string host;
     int port = 8080;
     std::string dir;
@@ -21,8 +23,6 @@ int main(int argc, char **argv )
 
     int opt = getopt( argc, argv, "h:p:d:");
         while( opt != -1 ) {
-            //std::cout << "IND" << optarg << argv[optind] << "\r\n";
-            //flush(std::cout);
             switch( opt ) {
                 case 'h':
                     host=optarg;
@@ -42,11 +42,9 @@ int main(int argc, char **argv )
 
             opt = getopt( argc, argv, "h:p:d:");
         }
-        //if (!port_set || !host_set || !dir_set)
-        //    return 1;
     signal(SIGTERM, handle_exit);
-    daemon(0, 0);
-    srv.run(host, dir, port);
+    srv->run(host, dir, port);
+    delete srv;
     return 0;
 }
 

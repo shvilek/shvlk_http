@@ -26,8 +26,8 @@ CServer::CServer(int aHandlerCount) : running_(true) {
 
 int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
     root_path_ = aDir;
-    std::cout << "PATH: " << root_path_;
-    flush(std::cout);
+    //std::cout << "PATH: " << root_path_;
+    //flush(std::cout);
     int master_ = socket(AF_INET, SOCK_STREAM, 0);
     sockaddr_in sa;
     sa.sin_family = AF_INET;
@@ -39,18 +39,18 @@ int CServer::run(const std::string& aHost, const std::string& aDir, int aPort) {
     setnonblocking(master_);
 
     int client_ = 0;
-    timeval tv;
-        tv.tv_sec = 1;
-        tv.tv_usec = 0;
+    //timeval tv;
+        //tv.tv_sec = 1;
+        //tv.tv_usec = 0;
        while(running()) {
-           fd_set fds;
-           FD_ZERO(&fds);
-           FD_SET(master_, &fds);
-           if (select(master_ + 1, &fds, NULL, NULL, &tv) > 0) {
+           //fd_set fds;
+           //FD_ZERO(&fds);
+           //FD_SET(master_, &fds);
+           //if (select(master_ + 1, &fds, NULL, NULL, &tv) > 0) {
                if ((client_ = accept(master_, 0, 0)) > 0) {
                     push_request(client_);
                }
-           }
+           //}
        }
 
        clear_all();
@@ -70,9 +70,11 @@ void CServer::clear_all() {
 
 void CServer::add_handler() {
     static int handler_id = 0;
+    //std::cout << "add handler " << handler_id + 1 << std::endl;
+    //flush(std::cout);
     std::shared_ptr<CHandler> handler_(new CHandler(*this, ++handler_id));
     workers_.insert(std::make_pair(handler_id, handler_));
-    handlers_.insert(std::make_pair(handler_id, std::thread(&CHandler::run, handler_)));
+    handlers_.insert(std::make_pair(handler_id, std::thread(&CHandler::run, handler_.get())));
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
@@ -86,7 +88,7 @@ void CServer::remove_handler(int aId) {
     //handlers_[aId].join();
     //handlers_.erase(aId);
     workers_.erase(aId);
-    std::cout << " erase  " << aId;
+    //std::cout << " erase  " << aId;
 
     }
     //

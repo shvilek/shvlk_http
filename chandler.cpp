@@ -79,14 +79,14 @@ void CHandler::process_request(int aConnection) {
     std::string head_line_;
     int count = 0;
     while (state_ != rs_body && (count = recv(aConnection, &data, 1, MSG_NOSIGNAL)) > 0) {
-        //std::cout << data;
+        ////std::cout << data;
         if (state_ == rs_body || data == '\r') continue;
         switch(state_) {
         case rs_initial_line_method:
             if (data != ' ')
                 method_ += data;
             else {
-                std::cout << "METHOD: " << method_ << std::endl;
+                //std::cout << "METHOD: " << method_ << std::endl;
                 state_ = rs_initial_line_path;
             }
             break;
@@ -94,7 +94,7 @@ void CHandler::process_request(int aConnection) {
             if (data != ' ')
                 path_ += data;
             else {
-                std::cout << "PATH: " << path_ << std::endl;
+                //std::cout << "PATH: " << path_ << std::endl;
                 state_ = rs_initial_line_version;
             }
             break;
@@ -103,7 +103,7 @@ void CHandler::process_request(int aConnection) {
             if (data != '\n')
                 version_ += data;
             else {
-                std::cout << "VERSION: " << version_ << std::endl;
+                //std::cout << "VERSION: " << version_ << std::endl;
                 state_ = rs_headers;
             }
             break;
@@ -141,13 +141,13 @@ void CHandler::process_request(int aConnection) {
                     auto now = std::chrono::system_clock::now();
                     auto now_c = std::chrono::system_clock::to_time_t(now);
 
-                    ss << "HTTP/1.0 200 OK\r\n\r\n";
+                    ss << "HTTP/1.0 200 OK\r\n\r\n\r\n";
                     //ss << "Date: " << std::put_time(std::localtime(&now_c), "%c") << "\r\n";
                     //ss << "Content-Type: text/html\r\n";
                     //ss << "Content-Length: " << size_  << "\r\n" << "\r\n";
                     r = send_data(aConnection, ss.str().data(), ss.str().size());
                     if (r == -1) {
-                        std::cout << "ERROR!";
+                        //std::cout << "ERROR!";
                         flush(std::cout);
                         return;
                     }
@@ -156,7 +156,7 @@ void CHandler::process_request(int aConnection) {
 
                     file_.read(read_data, sizeof(read_data));
                     while (file_.gcount() > 0) {
-                        std::cout << std::string(&read_data[0], file_.gcount()) << std::endl;
+                        //std::cout << std::string(&read_data[0], file_.gcount()) << std::endl;
                         flush(std::cout);
                         r = send_data(aConnection, read_data, file_.gcount());
                         if (r == -1)
